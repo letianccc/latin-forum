@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block head %}
+{{ super() }}
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='link.css') }}">
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='post.css') }}">
+
+{% endblock %}
+
+{% block page_content %}
+
+<div class='other'>
+    <div class='author'>
+        <p>作者简介</p>
+        <hr>
+        <a href="{{ url_for('.user', username=post.author.username) }}">
+            {{ post.author.username }}
+        </a>
+    </div>
+</div>
+
+<div class="post">
+    <div class='post-content'>
+        <h1>Title: {{ post.title }}</h1>
+
+        <p>{{ post.body }}<p>
+        <div>
+            <a href="{{ url_for('.user', username=post.author.username) }}">
+                {{ post.author.username }}
+            </a>
+            发布于{{ moment(post.timestamp).fromNow() }}
+        </div>
+    </div>
+    <hr>
+
+    <div class="comment_area">
+        <div class="comments">
+            <ul>
+                <li class='comment-count'>
+                    <p>comments count: {{post.comments.count()}}</p>
+                </li>
+
+                {% for comment in pagination.items %}
+                    <li class="comment" id="comment{{comment.id}}">
+                        <div>
+                            <div class="comment-time">
+                                发布于{{ moment(comment.timestamp).fromNow() }}
+                            </div>
+                            <div class="comment-profile">
+                                <line class="comment-author">
+                                    <a href="{{ url_for('.user', username=comment.author.username) }}">
+                                        &nbsp; &nbsp; {{ comment.author.username }}
+                                    </a>
+                                    {% if comment.author.id == post.author.id %}
+                                        <line style="color:gray">(作者)</line>
+                                    {% endif %}
+                                </line>
+
+                                {% if comment.target %}
+                                    <line style="color:gray">&nbsp;回复&nbsp;</line>
+                                    <line class="comment-target">
+                                        <a href="{{ url_for('.user', username=comment.target.username) }}">
+                                            &nbsp; &nbsp; {{ comment.target.username }}
+                                        </a>
+                                    </line>
+                                {% endif %}
+                            </div>
+
+                            <div class="comment-content">{{ comment.body }}</div>
+
+                            <div class="comment-interact">
+
+                                <line>xx</line>
+                                <line class="interact">
+                                    <button class="response">回复</button>
+                                </line>
+                            </div>
+
+                            <form class="comment_user_form comment_form form form-horizontal" method="post" role="form"
+                                    action="{{url_for('.comment', target_id=comment.id,
+                                            post_id=post.id)}}" >
+                                {{ form.hidden_tag() }}
+                                {{ wtf.form_errors(form, hiddens="only") }}
+                                {% set placeholder = '回复 '+comment.author.username|string %}
+                                {{ wtf.form_field(form.content, placeholder=placeholder) }}
+                                {{ wtf.form_field(form.submit, class="comment-submit") }}
+                                <button class="cancle_comment">cancle</button>
+                            </form>
+
+                        </div>
+
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% if pagination %}
+            <div class="pagination_area">
+                {{ macros.pagination_widget(pagination, '.post', post_id=post.id) }}
+            </div>
+        {% endif %}
+
+    </div>
+
+
+
+    <div>
+        <form class="comment_form form form-horizontal" method="post" role="form"
+                action="{{url_for('.comment', post_id=post.id)}}" >
+            {{ form.hidden_tag() }}
+            {{ wtf.form_errors(form, hiddens="only") }}
+
+            {{ wtf.form_field(form.content) }}
+            {{ wtf.form_field(form.submit, class="comment-submit") }}
+        </form>
+    </div>
+
+
+</div>
+
+
+
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+
+    <script> {% include "js/post.js" %} </script>
+
+{% endblock %}

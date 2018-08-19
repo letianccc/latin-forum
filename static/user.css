@@ -1,0 +1,28 @@
+
+
+li {
+    list-style: none;
+}
+
+#social {
+    right: 0;
+    top: 200px;
+    position:absolute;
+    width: 100px;
+    margin-right: 50px;
+}
+
+.base {
+    left: 50px;
+    position:absolute;
+    width: 900px;
+}
+
+.edit {
+    float: right;
+    margin: 50px 50px;
+}
+
+.profile {
+    font-size: 20px;
+}

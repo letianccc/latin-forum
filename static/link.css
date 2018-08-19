@@ -1,0 +1,18 @@
+
+.post {
+    width: 800px;
+}
+
+.other {
+    float: right;
+    /*border-left:1px solid black;*/
+    padding: 10px;
+}
+
+
+.author {
+    border-radius: 25px;
+    padding: 20px 100px 20px 10px;
+    border:1px solid gray;
+
+}
